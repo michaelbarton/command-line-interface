@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -o nounset
+
+REPO="bioboxes/command-line-interface"
+URL="git@github.com:bioboxes/command-line-interface.git"
+
+command -v hub >/dev/null 2>&1 || {
+  echo >&2 "I require hub but it's not installed.  Aborting."
+  exit 1;
+}
+
+current_release_version(){
+  git remote add bioboxes ${URL} 2> /dev/null
+  git fetch bioboxes
+  git branch --all |\
+    grep remotes/bioboxes/release |\
+    egrep --only-matching release/\\d+.\\d+.\\d+
+}
+
+set -o xtrace
+
+RELEASE=$(current_release_version)
+hub pull-request -b bioboxes/command-line-interface:${RELEASE}
