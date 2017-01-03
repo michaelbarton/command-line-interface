@@ -1,13 +1,14 @@
 Feature: Allow a user to ssh into an image to test internally
 
-  Scenario: Logging into an image and listing file locations
+  @announce-all
+  Scenario Outline: Logging into an image and listing file locations
     When I run the interactive command:
       """
-      biobox login short_read_assembler bioboxes/velvet
+      biobox login <type> <image>
       """
     And I type:
       """
-      find /bbx/*
+      find /bbx
       """
     And I exit the shell
     Then the stdout should contain:
@@ -20,5 +21,10 @@ Feature: Allow a user to ssh into an image to test internally
       """
     And the stdout should contain:
       """
-      /bbx/input/reads.fq.gz
+      /bbx/input/<file>
       """
+
+    Examples:
+      | type                 | image           | file           |
+      | short_read_assembler | bioboxes/velvet | reads.fq.gz    |
+      | assembler_benchmark  | bioboxes/quast  | assembly.fasta |
