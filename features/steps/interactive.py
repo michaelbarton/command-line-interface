@@ -1,15 +1,23 @@
 import time, pexpect
 
+PROCESS_EXIT = pexpect.EOF
+LINE_ENDING  = '\r\n'
+
 def type(process, input_):
     process.sendline(input_.encode())
-    time.sleep(3)
-    process.expect('\r\n')
+    process.expect(LINE_ENDING)
     return process.before
 
 @when(u'I run the interactive command')
 def step_impl(context):
     process = pexpect.spawn(context.text)
-    time.sleep(3)
+    process.sendline("")
+    status = process.expect([PROCESS_EXIT, LINE_ENDING])
+
+    # In the case when the PROCESS_EXIT expression has matched, this means
+    # the biobox CLI did not start
+    if status == 0:
+        assert False, "Behave CLI failed to start:\n{}".format(str(process))
 
     class Output(object):
         pass
