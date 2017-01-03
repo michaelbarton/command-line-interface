@@ -1,6 +1,5 @@
 Feature: Allow a user to ssh into an image to test internally
 
-  @announce-all
   Scenario Outline: Logging into an image and listing file locations
     When I run the interactive command:
       """

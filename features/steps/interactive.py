@@ -1,10 +1,10 @@
 import time, pexpect
 
 def type(process, input_):
-    process.send(input_.encode())
+    process.sendline(input_.encode())
     time.sleep(3)
-    process.expect('\n')
-    return str(process.buffer)
+    process.expect('\r\n')
+    return process.before
 
 @when(u'I run the interactive command')
 def step_impl(context):
@@ -21,9 +21,9 @@ def step_impl(context):
 
 @when(u'I type')
 def step_impl(context):
-    cmd = context.text.strip() + "\n"
+    cmd = context.text.strip()
     context.output.stdout = type(context.process, cmd)
 
 @when(u'I exit the shell')
 def step_impl(context):
-    context.process.send("exit\n")
+    context.process.sendline("exit")
